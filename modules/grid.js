@@ -13,6 +13,7 @@ container.appendChild(cell)
 
 }
 
+
 export function insertImages(container,images){
 
 const cells = container.querySelectorAll(".grid-cell")
@@ -23,6 +24,7 @@ if(cells[index]){
 
 const img=document.createElement("img")
 img.src=src
+img.draggable=true
 
 cells[index].appendChild(img)
 
@@ -31,4 +33,6 @@ cells[index].appendChild(img)
 })
 
 }
+
+
 
