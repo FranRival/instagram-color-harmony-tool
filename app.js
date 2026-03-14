@@ -80,14 +80,25 @@ if(!img) return
 
 cells[index+1].appendChild(img)
 
-/* crear cuadro puente */
+/* limpiar celda */
 
 cells[index].innerHTML = ""
 
-cells[index].style.background = color
+/* pintar color puente */
+
+cells[index].style.backgroundColor = color
+cells[index].style.backgroundImage = "none"
+
+/* marcar como bridge */
+
 cells[index].classList.add("bridge")
 
+/* texto opcional */
+
+cells[index].textContent = "bridge"
+
 }
+
 
 /* =========================
    IMAGE UPLOAD
