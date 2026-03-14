@@ -1,5 +1,6 @@
 
 import {createGrid, insertImages, reorderGrid} from "./modules/grid.js"
+import {generateBridgeColor, generateBridgeImage} from "./modules/bridge-generator.js"
 import {optimizeGrid} from "./modules/grid-optimizer.js"
 import {handleUpload} from "./modules/uploader.js"
 import {enableDrag} from "./modules/drag-system.js"
@@ -15,6 +16,7 @@ createGrid(gridContainer,3,7)
 
 /* función central de análisis */
 
+
 function runHarmonyAnalysis(){
 
 const analysis = analyzeImages(gridContainer)
@@ -25,16 +27,50 @@ const harmony = detectHarmonyIssues(analysis)
 
 console.log("Harmony result:",harmony)
 
+/* limpiar problemas anteriores */
+
 document.querySelectorAll(".problem").forEach(el=>{
 el.classList.remove("problem")
 })
 
 if(harmony){
 
+
 const cells = gridContainer.querySelectorAll(".grid-cell")
+
+
+if(
+cells[harmony.problemIndex] &&
+analysis[harmony.problemIndex]
+){
 
 cells[harmony.problemIndex].classList.add("problem")
 
+const problemColor = analysis[harmony.problemIndex].dominant
+
+
+
+/* color promedio del feed */
+
+const avgColor = rgbToHex(
+harmony.average.r,
+harmony.average.g,
+harmony.average.b
+)
+
+/* calcular color puente */
+
+const bridgeColor = generateBridgeColor(problemColor,avgColor)
+
+console.log("Bridge color:",bridgeColor)
+
+/* generar imagen puente */
+
+const bridgeImage = generateBridgeImage(bridgeColor)
+
+console.log("Bridge image:",bridgeImage)
+
+}
 }
 
 }
@@ -56,6 +92,14 @@ runHarmonyAnalysis()
 },200)
 
 })
+
+
+function rgbToHex(r,g,b){
+
+return "#"+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1)
+
+}
+
 
 const optimizeBtn = document.querySelector("#optimize")
 
