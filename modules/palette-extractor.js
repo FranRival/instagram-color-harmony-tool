@@ -3,40 +3,81 @@ export function extractDominantColor(image){
 const canvas = document.createElement("canvas")
 const ctx = canvas.getContext("2d")
 
-canvas.width = 60
-canvas.height = 60
+canvas.width = 80
+canvas.height = 80
 
-ctx.drawImage(image,0,0,60,60)
+ctx.drawImage(image,0,0,80,80)
 
-const data = ctx.getImageData(0,0,60,60).data
+const data = ctx.getImageData(0,0,80,80).data
 
-let bestColor = {r:0,g:0,b:0}
-let bestScore = 0
+const buckets = {}
 
-for(let i=0;i<data.length;i+=12){
+for(let i=0;i<data.length;i+=16){
 
 const r = data[i]
 const g = data[i+1]
 const b = data[i+2]
+
+/* ignorar blancos */
+
+if(r>240 && g>240 && b>240) continue
+
+/* ignorar negros */
+
+if(r<30 && g<30 && b<30) continue
+
+/* saturación */
 
 const max = Math.max(r,g,b)
 const min = Math.min(r,g,b)
 
 const saturation = max - min
 
-if(saturation > bestScore){
+/* ignorar gris */
 
-bestScore = saturation
-bestColor = {r,g,b}
+if(saturation < 25) continue
+
+/* reducir precisión para agrupar */
+
+const rr = Math.floor(r/32)*32
+const gg = Math.floor(g/32)*32
+const bb = Math.floor(b/32)*32
+
+const key = `${rr},${gg},${bb}`
+
+buckets[key] = (buckets[key] || 0) + 1
+
+}
+
+let dominant = null
+let maxCount = 0
+
+for(const key in buckets){
+
+if(buckets[key] > maxCount){
+
+maxCount = buckets[key]
+dominant = key
 
 }
 
 }
 
-return rgbToHex(bestColor.r,bestColor.g,bestColor.b)
+if(!dominant){
+
+return "#888888"
+
+}
+
+const [r,g,b] = dominant.split(",")
+
+return rgbToHex(Number(r),Number(g),Number(b))
 
 }
 
 function rgbToHex(r,g,b){
 return "#"+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1)
 }
+
+
+//filtramos colores problematicos: blanco, negro, gris

@@ -232,3 +232,17 @@ Suggested bridge palette:
 
 
 
+/* =========================
+   TENEMOS PROBLEMAS
+========================= */
+
+1. no los colores dominantes reales
+2. promedia demasiados pixeles
+3. detecta grises / sombras / piel
+
+**muestrear pixeles
+**eliminar blancos y negros
+**ignorar grises
+**agrupar colores
+**devolver el mas frecuente
+
