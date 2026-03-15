@@ -5,6 +5,7 @@ import {handleUpload} from "./modules/uploader.js"
 import {enableDrag} from "./modules/drag-system.js"
 import {analyzeImages} from "./modules/image-analyzer.js"
 import {detectHarmonyIssues} from "./modules/harmony-engine.js"
+import {renderColorStrip} from "./modules/ui-feedback.js"
 
 const gridContainer = document.querySelector("#grid")
 const uploadInput = document.querySelector("#upload")
@@ -17,6 +18,8 @@ createGrid(gridContainer,3,7)
 ========================= */
 
 function runHarmonyAnalysis(){
+
+
 
 const analysis = analyzeImages(gridContainer)
 
@@ -59,6 +62,7 @@ console.log("Bridge color:",bridgeColor)
 /* insertar bridge */
 
 insertBridge(index,bridgeColor)
+renderColorStrip(gridContainer,analysis)
 
 }
 
