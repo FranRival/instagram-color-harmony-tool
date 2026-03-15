@@ -8,11 +8,18 @@ import {detectHarmonyIssues} from "./modules/harmony-engine.js"
 import {renderColorStrip} from "./modules/ui-feedback.js"
 import {calculateHarmonyScore} from "./modules/harmony-score.js"
 
+
 const gridContainer = document.querySelector("#grid")
 const uploadInput = document.querySelector("#upload")
 const optimizeBtn = document.querySelector("#optimize")
 
 createGrid(gridContainer,3,7)
+const scoreDisplay = document.createElement("div")
+scoreDisplay.id = "harmony-score"
+scoreDisplay.innerText = "Feed Harmony: --%"
+
+gridContainer.parentNode.insertBefore(scoreDisplay,gridContainer)
+
 
 /* =========================
    ANALYZE HARMONY
@@ -23,6 +30,10 @@ function runHarmonyAnalysis(){
 
 
 const analysis = analyzeImages(gridContainer)
+
+
+
+
 
 console.log("Color analysis:",analysis)
 
@@ -66,6 +77,10 @@ insertBridge(index,bridgeColor)
 renderColorStrip(gridContainer,analysis)
 
 const score = calculateHarmonyScore(analysis)
+console.log("Feed Harmony Score:",score + "%")
+document.getElementById("harmony-score").innerText =
+"Feed Harmony: " + score + "%"
+
 
 console.log("Harmony Score:",score)
 
