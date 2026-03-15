@@ -81,3 +81,5 @@ return "#"+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1)
 
 
 //filtramos colores problematicos: blanco, negro, gris
+//ahora, detectamos la ruptura. Pero no podemos decidir que tan armonico es el feed completo
+//Hay que construir Harmony Score
