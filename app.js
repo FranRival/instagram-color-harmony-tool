@@ -70,32 +70,50 @@ function insertBridge(index,color){
 
 const cells = gridContainer.querySelectorAll(".grid-cell")
 
-if(!cells[index] || !cells[index+1]) return
+/* obtener imágenes actuales */
 
-const img = cells[index].querySelector("img")
+const images = []
 
-if(!img) return
+cells.forEach(cell=>{
+const img = cell.querySelector("img")
+images.push(img ? img.src : null)
+})
 
-/* mover imagen conflictiva */
+/* insertar hueco para bridge */
 
-cells[index+1].appendChild(img)
+images.splice(index,0,"BRIDGE")
 
-/* limpiar celda */
+/* eliminar última si excede tamaño */
 
-cells[index].innerHTML = ""
+images.length = cells.length
 
-/* pintar color puente */
+/* reconstruir grid */
 
-cells[index].style.backgroundColor = color
-cells[index].style.backgroundImage = "none"
+cells.forEach(cell=>{
+cell.innerHTML = ""
+cell.style.background = ""
+cell.classList.remove("bridge")
+})
 
-/* marcar como bridge */
+images.forEach((src,i)=>{
 
-cells[index].classList.add("bridge")
+if(src === "BRIDGE"){
 
-/* texto opcional */
+cells[i].style.background = color
+cells[i].classList.add("bridge")
+cells[i].textContent = "bridge"
 
-cells[index].textContent = "bridge"
+}else if(src){
+
+const img = document.createElement("img")
+img.src = src
+img.draggable = true
+
+cells[i].appendChild(img)
+
+}
+
+})
 
 }
 
