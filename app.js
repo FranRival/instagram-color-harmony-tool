@@ -8,6 +8,8 @@ import {detectHarmonyIssues} from "./modules/harmony-engine.js"
 import {renderColorStrip} from "./modules/ui-feedback.js"
 import {calculateHarmonyScore} from "./modules/harmony-score.js"
 import {renderColorMap} from "./modules/color-map.js"
+import {detectPattern} from "./modules/pattern-detector.js"
+
 
 
 
@@ -33,10 +35,14 @@ function runHarmonyAnalysis(){
 
 const analysis = analyzeImages(gridContainer)
 renderColorMap(gridContainer,analysis)
+const pattern = detectPattern(analysis,3)
+
+console.log("Feed Pattern:",pattern)
 
 
 
 
+//implementaremo Checkboard - tablero de ajedrez --- diagonal feed -- y column theme 
 
 
 console.log("Color analysis:",analysis)
