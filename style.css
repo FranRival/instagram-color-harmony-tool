@@ -71,6 +71,21 @@ height:28px;
 border-radius:4px;
 }
 
+#color-map{
+display:flex;
+gap:6px;
+margin-bottom:12px;
+flex-wrap:wrap;
+}
+
+.color-swatch{
+width:24px;
+height:24px;
+border-radius:4px;
+border:1px solid #000;
+}
+
+
 
 
 

@@ -7,6 +7,8 @@ import {analyzeImages} from "./modules/image-analyzer.js"
 import {detectHarmonyIssues} from "./modules/harmony-engine.js"
 import {renderColorStrip} from "./modules/ui-feedback.js"
 import {calculateHarmonyScore} from "./modules/harmony-score.js"
+import {renderColorMap} from "./modules/color-map.js"
+
 
 
 const gridContainer = document.querySelector("#grid")
@@ -30,6 +32,8 @@ function runHarmonyAnalysis(){
 
 
 const analysis = analyzeImages(gridContainer)
+renderColorMap(gridContainer,analysis)
+
 
 
 
