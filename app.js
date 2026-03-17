@@ -9,6 +9,8 @@ import {renderColorStrip} from "./modules/ui-feedback.js"
 import {calculateHarmonyScore} from "./modules/harmony-score.js"
 import {renderColorMap} from "./modules/color-map.js"
 import {detectPattern} from "./modules/pattern-detector.js"
+import {optimizeByPattern} from "./modules/pattern-optimizer.js"
+
 
 
 
@@ -180,7 +182,18 @@ optimizeBtn.addEventListener("click",()=>{
 
 const analysis = analyzeImages(gridContainer)
 
-const optimized = optimizeGrid(analysis)
+const pattern = detectPattern(analysis,3)
+
+console.log("Detected pattern:",pattern)
+
+let optimized
+
+if(pattern === "random"){
+optimized = optimizeGrid(analysis)
+}else{
+optimized = optimizeByPattern(analysis,pattern,3)
+}
+
 
 console.log("Optimized order:",optimized)
 
