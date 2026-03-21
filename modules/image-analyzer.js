@@ -1,4 +1,5 @@
 import {extractDominantColor} from "./palette-extractor.js"
+import {detectSkinTone} from "./skin-detector.js"
 
 export function analyzeImages(gridContainer){
 
@@ -10,10 +11,15 @@ images.forEach((img,index)=>{
 
 const dominant = extractDominantColor(img)
 
+/* detectar tono de piel */
+
+const skin = detectSkinTone(img)
+
 results.push({
 
 index:index,
-dominant:dominant
+dominant:dominant,
+skin:skin
 
 })
 
