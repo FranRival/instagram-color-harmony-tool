@@ -10,6 +10,8 @@ import {calculateHarmonyScore} from "./modules/harmony-score.js"
 import {renderColorMap} from "./modules/color-map.js"
 import {detectPattern} from "./modules/pattern-detector.js"
 import {optimizeByPattern} from "./modules/pattern-optimizer.js"
+import {analyzeDecision} from "./modules/decision-engine.js"
+
 
 
 
@@ -50,6 +52,12 @@ console.log("Feed Pattern:",pattern)
 console.log("Color analysis:",analysis)
 
 const harmony = detectHarmonyIssues(analysis)
+
+
+const decision = analyzeDecision(analysis, harmony)
+
+console.log("Decision:",decision)
+
 
 console.log("Harmony result:",harmony)
 
