@@ -11,11 +11,11 @@ if(!analysis[index]) return null
 const problemColor = hexToRgb(analysis[index].dominant)
 const avgColor = harmony.average
 
-/* calcular distancia real */
+/* ===== distancia principal ===== */
 
 const distance = colorDistance(problemColor, avgColor)
 
-/* calcular distancia promedio del feed */
+/* ===== distancia promedio ===== */
 
 let total = 0
 
@@ -26,7 +26,7 @@ total += colorDistance(c, avgColor)
 
 const avgDistance = total / analysis.length
 
-/* ===== confianza ===== */
+/* ===== confianza base ===== */
 
 let confidence = 0
 
@@ -40,6 +40,57 @@ confidence = 0.5
 confidence = 0.2
 }
 
+/* ===== CLUSTER DE PIEL ===== */
+
+const skinSamples = analysis
+  .map(a => a.skin)
+  .filter(Boolean)
+
+let skinCluster = null
+
+if(skinSamples.length >= 3){
+
+let r=0,g=0,b=0
+
+skinSamples.forEach(s=>{
+r+=s.r
+g+=s.g
+b+=s.b
+})
+
+const n = skinSamples.length
+
+skinCluster = {
+r: Math.floor(r/n),
+g: Math.floor(g/n),
+b: Math.floor(b/n)
+}
+
+}
+
+/* ===== AJUSTE POR PIEL ===== */
+
+if(skinCluster && analysis[index].skin){
+
+const skinDistance = colorDistance(
+analysis[index].skin,
+skinCluster
+)
+
+/* misma persona → bajar confianza */
+
+if(skinDistance < 35){
+confidence *= 0.4
+}
+
+/* muy diferente → subir confianza */
+
+if(skinDistance > 80){
+confidence *= 1.2
+}
+
+}
+
 /* ===== decisión ===== */
 
 let action = "ignore"
@@ -50,7 +101,7 @@ action = "fix"
 action = "suggest"
 }
 
-/* ===== tipo ===== */
+/* ===== severidad ===== */
 
 let severity = "low"
 
@@ -64,7 +115,7 @@ severity = "medium"
 
 return {
 problemIndex: index,
-confidence,
+confidence: Number(confidence.toFixed(2)),
 severity,
 action,
 distance,
