@@ -11,100 +11,168 @@ import {renderColorMap} from "./modules/color-map.js"
 import {detectPattern} from "./modules/pattern-detector.js"
 import {optimizeByPattern} from "./modules/pattern-optimizer.js"
 import {analyzeDecision} from "./modules/decision-engine.js"
+import {renderUI} from "./modules/ui-feedback.js"
 
+/* =========================
+   GLOBAL STATE
+========================= */
 
+let currentDecision = null
+let currentAnalysis = null
+let currentHarmony = null
 
-
-
+/* =========================
+   DOM
+========================= */
 
 const gridContainer = document.querySelector("#grid")
 const uploadInput = document.querySelector("#upload")
 const optimizeBtn = document.querySelector("#optimize")
 
 createGrid(gridContainer,3,7)
+
+/* score UI */
+
 const scoreDisplay = document.createElement("div")
 scoreDisplay.id = "harmony-score"
 scoreDisplay.innerText = "Feed Harmony: --%"
 
 gridContainer.parentNode.insertBefore(scoreDisplay,gridContainer)
 
-
 /* =========================
-   ANALYZE HARMONY
+   ANALYZE
 ========================= */
 
 function runHarmonyAnalysis(){
 
-
-
 const analysis = analyzeImages(gridContainer)
-renderColorMap(gridContainer,analysis)
-const pattern = detectPattern(analysis,3)
-
-console.log("Feed Pattern:",pattern)
-
-
-
-
-//implementaremo Checkboard - tablero de ajedrez --- diagonal feed -- y column theme 
-
-
-console.log("Color analysis:",analysis)
-
 const harmony = detectHarmonyIssues(analysis)
-
-
 const decision = analyzeDecision(analysis, harmony)
+const pattern = detectPattern(analysis,3)
+const score = calculateHarmonyScore(analysis)
 
-console.log("Decision:",decision)
+/* guardar estado */
 
+currentDecision = decision
+currentAnalysis = analysis
+currentHarmony = harmony
 
-console.log("Harmony result:",harmony)
+/* visualizaciones */
 
-/* limpiar marcas anteriores */
+renderColorMap(gridContainer,analysis)
+renderColorStrip(gridContainer,analysis)
+
+/* limpiar marcas */
 
 document.querySelectorAll(".problem").forEach(el=>{
 el.classList.remove("problem")
 })
 
-if(!harmony) return
+/* marcar problema */
+
+if(harmony){
 
 const cells = gridContainer.querySelectorAll(".grid-cell")
 
-const index = harmony.problemIndex
+if(cells[harmony.problemIndex]){
+cells[harmony.problemIndex].classList.add("problem")
+}
 
-if(!cells[index]) return
+}
 
-cells[index].classList.add("problem")
+/* score */
 
-/* calcular bridge color */
+scoreDisplay.innerText = "Feed Harmony: " + score + "%"
 
-const problemColor = analysis[index].dominant
+/* UI */
+
+renderUI(gridContainer,{
+score,
+pattern,
+decision
+})
+
+/* eventos UI */
+
+attachUIEvents()
+
+}
+
+/* =========================
+   UI EVENTS
+========================= */
+
+function attachUIEvents(){
+
+setTimeout(()=>{
+
+const analyzeBtn = document.getElementById("analyzeBtn")
+if(analyzeBtn){
+analyzeBtn.onclick = ()=>{
+runHarmonyAnalysis()
+}
+}
+
+const optimizeBtnUI = document.getElementById("optimizeBtn")
+if(optimizeBtnUI){
+optimizeBtnUI.onclick = ()=>{
+
+cleanGrid()
+
+const analysis = analyzeImages(gridContainer)
+const pattern = detectPattern(analysis,3)
+
+let optimized
+
+if(pattern === "random"){
+optimized = optimizeGrid(analysis)
+}else{
+optimized = optimizeByPattern(analysis,pattern,3)
+}
+
+reorderGrid(gridContainer,optimized)
+
+setTimeout(()=>{
+runHarmonyAnalysis()
+},100)
+
+}
+}
+
+const bridgeBtn = document.getElementById("bridgeBtn")
+if(bridgeBtn){
+bridgeBtn.onclick = ()=>{
+
+if(!currentDecision || currentDecision.action === "ignore") return
+
+const index = currentDecision.problemIndex
+
+const problemColor = currentAnalysis[index].dominant
 
 const avgColor = rgbToHex(
-harmony.average.r,
-harmony.average.g,
-harmony.average.b
+currentHarmony.average.r,
+currentHarmony.average.g,
+currentHarmony.average.b
 )
 
 const bridgeColor = generateBridgeColor(problemColor,avgColor)
 
-console.log("Bridge color:",bridgeColor)
-
-/* insertar bridge */
-
 insertBridge(index,bridgeColor)
-renderColorStrip(gridContainer,analysis)
-
-const score = calculateHarmonyScore(analysis)
-console.log("Feed Harmony Score:",score + "%")
-document.getElementById("harmony-score").innerText =
-"Feed Harmony: " + score + "%"
-
-
-console.log("Harmony Score:",score)
 
 }
+}
+
+const ignoreBtn = document.getElementById("ignoreBtn")
+if(ignoreBtn){
+ignoreBtn.onclick = ()=>{
+console.log("Ignored")
+}
+}
+
+},0)
+
+}
+
 
 /* =========================
    INSERT BRIDGE
@@ -114,8 +182,6 @@ function insertBridge(index,color){
 
 const cells = gridContainer.querySelectorAll(".grid-cell")
 
-/* obtener imágenes actuales */
-
 const images = []
 
 cells.forEach(cell=>{
@@ -123,15 +189,8 @@ const img = cell.querySelector("img")
 images.push(img ? img.src : null)
 })
 
-/* insertar hueco para bridge */
-
 images.splice(index,0,"BRIDGE")
-
-/* eliminar última si excede tamaño */
-
 images.length = cells.length
-
-/* reconstruir grid */
 
 cells.forEach(cell=>{
 cell.innerHTML = ""
@@ -161,9 +220,23 @@ cells[i].appendChild(img)
 
 }
 
+/* =========================
+   CLEAN GRID
+========================= */
+
+function cleanGrid(){
+
+const cells = gridContainer.querySelectorAll(".grid-cell")
+
+cells.forEach(cell=>{
+cell.style.background = ""
+cell.classList.remove("bridge")
+})
+
+}
 
 /* =========================
-   IMAGE UPLOAD
+   UPLOAD
 ========================= */
 
 uploadInput.addEventListener("change",(e)=>{
@@ -183,16 +256,15 @@ runHarmonyAnalysis()
 })
 
 /* =========================
-   OPTIMIZE FEED
+   OPTIMIZE (botón externo)
 ========================= */
 
 optimizeBtn.addEventListener("click",()=>{
 
+cleanGrid()
+
 const analysis = analyzeImages(gridContainer)
-
 const pattern = detectPattern(analysis,3)
-
-console.log("Detected pattern:",pattern)
 
 let optimized
 
@@ -201,9 +273,6 @@ optimized = optimizeGrid(analysis)
 }else{
 optimized = optimizeByPattern(analysis,pattern,3)
 }
-
-
-console.log("Optimized order:",optimized)
 
 reorderGrid(gridContainer,optimized)
 
@@ -220,4 +289,3 @@ runHarmonyAnalysis()
 function rgbToHex(r,g,b){
 return "#"+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1)
 }
-

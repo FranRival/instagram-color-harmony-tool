@@ -87,5 +87,21 @@ border:1px solid #000;
 
 
 
+#ui-panel{
+padding:12px;
+background:#111;
+color:white;
+margin-bottom:12px;
+border-radius:8px;
+font-family:sans-serif;
+}
+
+#ui-panel button{
+margin-right:8px;
+padding:6px 10px;
+cursor:pointer;
+}
+
+
 
 
