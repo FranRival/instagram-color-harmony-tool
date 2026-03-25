@@ -21,6 +21,9 @@ let currentDecision = null
 let currentAnalysis = null
 let currentHarmony = null
 
+let hasBridge = false
+
+
 /* =========================
    DOM
 ========================= */
@@ -44,6 +47,7 @@ gridContainer.parentNode.insertBefore(scoreDisplay,gridContainer)
 ========================= */
 
 function runHarmonyAnalysis(){
+   hasBridge = false
 
 const analysis = analyzeImages(gridContainer)
 const harmony = detectHarmonyIssues(analysis)
@@ -139,9 +143,19 @@ runHarmonyAnalysis()
 }
 }
 
+
+
+
+
+
+
+
+
 const bridgeBtn = document.getElementById("bridgeBtn")
 if(bridgeBtn){
 bridgeBtn.onclick = ()=>{
+
+if(hasBridge) return
 
 if(!currentDecision || currentDecision.action === "ignore") return
 
@@ -159,7 +173,12 @@ const bridgeColor = generateBridgeColor(problemColor,avgColor)
 
 insertBridge(index,bridgeColor)
 
+hasBridge = true
+
 }
+
+
+
 }
 
 const ignoreBtn = document.getElementById("ignoreBtn")
@@ -170,6 +189,19 @@ console.log("Ignored")
 }
 
 },0)
+
+
+
+
+const resetBtn = document.getElementById("resetBtn")
+
+if(resetBtn){
+resetBtn.onclick = ()=>{
+cleanGrid()
+runHarmonyAnalysis()
+}
+}
+
 
 }
 
@@ -229,11 +261,24 @@ function cleanGrid(){
 const cells = gridContainer.querySelectorAll(".grid-cell")
 
 cells.forEach(cell=>{
+
+/* eliminar estilos */
+
 cell.style.background = ""
 cell.classList.remove("bridge")
+
+/* eliminar texto */
+
+if(!cell.querySelector("img")){
+cell.innerHTML = ""
+}
+
 })
 
+hasBridge = false
+
 }
+
 
 /* =========================
    UPLOAD

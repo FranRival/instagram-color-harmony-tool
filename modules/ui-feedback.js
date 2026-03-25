@@ -87,6 +87,7 @@ actions.innerHTML = `
 <button id="optimizeBtn">Optimize</button>
 <button id="bridgeBtn">Insert Bridge</button>
 <button id="ignoreBtn">Ignore</button>
+<button id="resetBtn">Reset</button>
 `
 
 panel.appendChild(actions)
