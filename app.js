@@ -23,6 +23,9 @@ let currentHarmony = null
 
 let hasBridge = false
 let isAnalyzing = false
+let isOptimizing = false
+
+
 
 let gridState = []
 
@@ -135,9 +138,18 @@ runHarmonyAnalysis()
 }
 }
 
+
 const optimizeBtnUI = document.getElementById("optimizeBtn")
 if(optimizeBtnUI){
 optimizeBtnUI.onclick = ()=>{
+
+if(isOptimizing) return
+isOptimizing = true
+
+if(!gridState.length){
+isOptimizing = false
+return
+}
 
 cleanGrid()
 
@@ -152,10 +164,18 @@ optimized = optimizeGrid(analysis)
 optimized = optimizeByPattern(analysis,pattern,3)
 }
 
-reorderGrid(gridContainer,optimized)
+/* reconstruir estado */
+
+gridState = optimized.map(item => ({
+type: "image",
+src: gridState[item.index].src
+}))
+
+renderGrid()
 
 setTimeout(()=>{
 runHarmonyAnalysis()
+isOptimizing = false
 },100)
 
 }
