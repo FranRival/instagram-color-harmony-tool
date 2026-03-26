@@ -22,6 +22,7 @@ let currentAnalysis = null
 let currentHarmony = null
 
 let hasBridge = false
+let isAnalyzing = false
 
 let gridState = []
 
@@ -52,6 +53,15 @@ gridContainer.parentNode.insertBefore(scoreDisplay,gridContainer)
 function runHarmonyAnalysis(){
    hasBridge = false
 
+if(isAnalyzing) return
+isAnalyzing = true
+
+if(!gridState.length){
+isAnalyzing = false
+return
+}
+
+
 const analysis = analyzeImages(gridContainer)
 const harmony = detectHarmonyIssues(analysis)
 const decision = analyzeDecision(analysis, harmony)
@@ -63,6 +73,10 @@ const score = calculateHarmonyScore(analysis)
 currentDecision = decision
 currentAnalysis = analysis
 currentHarmony = harmony
+
+
+
+
 
 /* visualizaciones */
 
@@ -102,6 +116,7 @@ decision
 /* eventos UI */
 
 attachUIEvents()
+isAnalyzing = false
 
 }
 
