@@ -23,6 +23,9 @@ let currentHarmony = null
 
 let hasBridge = false
 
+let gridState = []
+
+
 
 /* =========================
    DOM
@@ -209,46 +212,20 @@ runHarmonyAnalysis()
 /* =========================
    INSERT BRIDGE
 ========================= */
-
 function insertBridge(index,color){
 
-const cells = gridContainer.querySelectorAll(".grid-cell")
+if(hasBridge) return
 
-const images = []
-
-cells.forEach(cell=>{
-const img = cell.querySelector("img")
-images.push(img ? img.src : null)
+gridState.splice(index,0,{
+type: "bridge",
+color: color
 })
 
-images.splice(index,0,"BRIDGE")
-images.length = cells.length
+gridState = gridState.slice(0,21)
 
-cells.forEach(cell=>{
-cell.innerHTML = ""
-cell.style.background = ""
-cell.classList.remove("bridge")
-})
+hasBridge = true
 
-images.forEach((src,i)=>{
-
-if(src === "BRIDGE"){
-
-cells[i].style.background = color
-cells[i].classList.add("bridge")
-cells[i].textContent = "bridge"
-
-}else if(src){
-
-const img = document.createElement("img")
-img.src = src
-img.draggable = true
-
-cells[i].appendChild(img)
-
-}
-
-})
+renderGrid()
 
 }
 
@@ -258,26 +235,16 @@ cells[i].appendChild(img)
 
 function cleanGrid(){
 
-const cells = gridContainer.querySelectorAll(".grid-cell")
+/* eliminar bridges del estado */
 
-cells.forEach(cell=>{
-
-/* eliminar estilos */
-
-cell.style.background = ""
-cell.classList.remove("bridge")
-
-/* eliminar texto */
-
-if(!cell.querySelector("img")){
-cell.innerHTML = ""
-}
-
-})
+gridState = gridState.filter(item => item.type === "image")
 
 hasBridge = false
 
+renderGrid()
+
 }
+
 
 
 /* =========================
@@ -290,7 +257,15 @@ const files = e.target.files
 
 const images = handleUpload(files)
 
-insertImages(gridContainer,images)
+/* guardar estado */
+
+gridState = images.map(src => ({
+type: "image",
+src: src
+}))
+
+renderGrid()
+
 
 enableDrag(gridContainer)
 
@@ -300,15 +275,16 @@ runHarmonyAnalysis()
 
 })
 
+
+
+
+
 /* =========================
    OPTIMIZE (botón externo)
 ========================= */
 
-optimizeBtn.addEventListener("click",()=>{
-
-cleanGrid()
-
 const analysis = analyzeImages(gridContainer)
+
 const pattern = detectPattern(analysis,3)
 
 let optimized
@@ -319,13 +295,15 @@ optimized = optimizeGrid(analysis)
 optimized = optimizeByPattern(analysis,pattern,3)
 }
 
-reorderGrid(gridContainer,optimized)
+/* reconstruir estado */
 
-setTimeout(()=>{
-runHarmonyAnalysis()
-},100)
+gridState = optimized.map(item => ({
+type: "image",
+src: gridState[item.index].src
+}))
 
-})
+renderGrid()
+
 
 /* =========================
    UTIL
@@ -333,4 +311,47 @@ runHarmonyAnalysis()
 
 function rgbToHex(r,g,b){
 return "#"+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1)
+}
+
+
+
+
+
+
+
+
+function renderGrid(){
+
+const cells = gridContainer.querySelectorAll(".grid-cell")
+
+cells.forEach((cell,i)=>{
+
+cell.innerHTML = ""
+cell.style.background = ""
+cell.classList.remove("bridge")
+
+const item = gridState[i]
+
+if(!item) return
+
+if(item.type === "image"){
+
+const img = document.createElement("img")
+img.src = item.src
+img.draggable = true
+
+cell.appendChild(img)
+
+}
+
+if(item.type === "bridge"){
+
+cell.style.background = item.color
+cell.classList.add("bridge")
+cell.textContent = "bridge"
+
+}
+
+})
+
 }
