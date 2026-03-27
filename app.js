@@ -235,9 +235,9 @@ const resetBtn = document.getElementById("resetBtn")
 
 if(resetBtn){
 resetBtn.onclick = ()=>{
-cleanGrid()
-runHarmonyAnalysis()
+resetSystem()
 }
+
 }
 
 
@@ -280,6 +280,31 @@ renderGrid()
 
 }
 
+
+
+/* =========================
+   RESET SYSTEM
+========================= */
+
+function resetSystem(){
+
+gridState = []
+hasBridge = false
+
+currentDecision = null
+currentAnalysis = null
+currentHarmony = null
+
+renderGrid()
+
+/* reset UI */
+
+const score = document.getElementById("harmony-score")
+if(score){
+score.innerText = "Feed Harmony: --%"
+}
+
+}
 
 
 /* =========================
