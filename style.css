@@ -103,5 +103,9 @@ cursor:pointer;
 }
 
 
+.preview{
+opacity:0.5;
+outline:2px dashed white;
+}
 
 
