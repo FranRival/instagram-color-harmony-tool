@@ -30,6 +30,8 @@ let isOptimizing = false
 let gridState = []
 
 
+let previewIndex = null
+let previewColor = null
 
 /* =========================
    DOM
@@ -242,6 +244,30 @@ resetSystem()
 
 
 }
+
+
+
+
+////preview bridge
+
+function previewBridge(index,color){
+
+previewIndex = index
+previewColor = color
+
+const cells = gridContainer.querySelectorAll(".grid-cell")
+
+cells.forEach(cell=>{
+cell.classList.remove("preview")
+})
+
+if(cells[index]){
+cells[index].classList.add("preview")
+cells[index].style.background = color
+}
+
+}
+
 
 
 /* =========================
