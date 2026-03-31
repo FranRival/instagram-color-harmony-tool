@@ -56,6 +56,13 @@ gridContainer.parentNode.insertBefore(scoreDisplay,gridContainer)
 ========================= */
 
 function runHarmonyAnalysis(){
+   
+previewIndex = null
+previewColor = null
+
+document.querySelectorAll(".preview").forEach(el=>{
+el.classList.remove("preview")
+})
    hasBridge = false
 
 if(isAnalyzing) return
@@ -137,6 +144,23 @@ const analyzeBtn = document.getElementById("analyzeBtn")
 if(analyzeBtn){
 analyzeBtn.onclick = ()=>{
 runHarmonyAnalysis()
+}
+}
+
+const applyBtn = document.getElementById("applyBridgeBtn")
+
+if(applyBtn){
+applyBtn.onclick = ()=>{
+
+if(previewIndex === null) return
+
+insertBridge(previewIndex,previewColor)
+
+/* limpiar preview */
+
+previewIndex = null
+previewColor = null
+
 }
 }
 
