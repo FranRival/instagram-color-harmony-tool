@@ -195,8 +195,6 @@ const bridgeBtn = document.getElementById("bridgeBtn")
 if(bridgeBtn){
 bridgeBtn.onclick = ()=>{
 
-if(hasBridge) return
-
 if(!currentDecision || currentDecision.action === "ignore") return
 
 const index = currentDecision.problemIndex
@@ -211,9 +209,9 @@ currentHarmony.average.b
 
 const bridgeColor = generateBridgeColor(problemColor,avgColor)
 
-insertBridge(index,bridgeColor)
+/* en lugar de insertar → preview */
 
-hasBridge = true
+previewBridge(index,bridgeColor)
 
 }
 
